@@ -114,7 +114,8 @@ Access to Amazon repositories
 The repository urls are only accessible from within the AWS environment.  To access these repositories locally there
 are several options:
 
-#. Use VPN connection to EC2, such as `OpenVPN Access Server`_ with `Tunnelblick`_ client.
+#. Use VPN connection to EC2, such as `OpenVPN Access Server`_ with `Viscosity`_ client,
+   and route S3 prefixes over the VPN. See `aws ec2 describe-prefix-lists`_.
 #. Launch HTTP proxy in EC2 with security group restricted to your IP addresses, and configure image ``--yum-proxy``.
 
 .. _Amazon Linux AMI: https://aws.amazon.com/amazon-linux-ami/
@@ -122,4 +123,5 @@ are several options:
 .. _VirtualBox: https://www.virtualbox.org/wiki/Downloads
 .. _Vagrant: https://www.vagrantup.com/
 .. _OpenVPN Access Server: https://openvpn.net/
-.. _Tunnelblick: https://tunnelblick.net/
+.. _Viscosity: https://www.sparklabs.com/viscosity/
+.. _aws ec2 describe-prefix-lists: http://docs.aws.amazon.com/cli/latest/reference/ec2/describe-prefix-lists.html
