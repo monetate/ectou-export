@@ -54,8 +54,8 @@ Host software
 
 The software has been tested using:
 
-- VirtualBox 5.0.12
-- Vagrant 1.8.1
+- VirtualBox 5.1.8
+- Vagrant 1.8.6
 - Python 2.7
 
   - boto3 1.2.3
