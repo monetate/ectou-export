@@ -19,6 +19,7 @@ Examples:
     ./export.py --ami-name amzn-ami-hvm-2014.09.2.x86_64-gp2 [--vpc-name name] [--yum-proxy url]
     ./export.py --ami-name amzn-ami-hvm-2015.03.1.x86_64-gp2 [--vpc-name name] [--yum-proxy url]
     ./export.py --ami-name amzn-ami-hvm-2015.09.1.x86_64-gp2 [--vpc-name name] [--yum-proxy url]
+    ./export.py --ami-name amzn-ami-hvm-2016.03.3.x86_64-gp2 [--vpc-name name] [--yum-proxy url]
 
 These examples export vagrant box files named ``AMI_NAME-DATETIME.box`` and ``AMI_NAME-DATETIME-guest.box``.
 
