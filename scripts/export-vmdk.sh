@@ -82,10 +82,6 @@ EOF
 # Disable sudo tty requirement
 sed -i.bak -e 's/^Defaults    requiretty/#Defaults    requiretty/g' $MNT/etc/sudoers
 
-# Ensure vagrant is able to detect guest as redhat
-# https://github.com/mitchellh/vagrant/blob/7caaffbf389fb298840eafb1edcdf554b977182e/plugins/guests/redhat/guest.rb#L7
-touch $MNT/etc/redhat-release
-
 
 ### End chroot provisioning
 
