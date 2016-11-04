@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Export Amazon Linux AMI 2014.09, 2015.03, or 2015.09 image from device to vmdk file.
+# Export Amazon Linux AMI 2014.09, 2015.03, 2015.09 or 2016.03 image from device to vmdk file.
 #
 # Usage:
 #   export-vmdk.sh input-device output-vmdk [yum-proxy]
