@@ -112,6 +112,10 @@ AWS account should have default VPC or explicit VPC.  Requires AWS credentials w
 Access to Amazon repositories
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+note::
+    Since the release of the Amazon Linux Container Image, the repositories are public.
+    The yum proxy or VPN is no longer required.
+
 The repository urls are only accessible from within the AWS environment.  To access these repositories locally there
 are several options:
 
