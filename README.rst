@@ -1,7 +1,7 @@
 ectou-export
 ============
 
-This project enables running an `Amazon Linux AMI`_ on a local `VirtualBox`_ virtual machine via `Vagrant`_.
+This project enables running an `Amazon Linux AMI`_ on a local `VirtualBox`_ and/or VMWare virtual machine via `Vagrant`_.
 
 Goal
 ----
@@ -55,6 +55,8 @@ Host software
 The software has been tested using:
 
 - VirtualBox 5.1.8
+- VMWare Fusion Pro 10.1
+- Vagrant VMware plugin
 - Vagrant 1.8.6
 - Python 2.7
 
@@ -92,7 +94,7 @@ AWS account should have default VPC or explicit VPC.  Requires AWS credentials w
             "ec2:CreateSecurityGroup",
             "ec2:AuthorizeSecurityGroupIngress",
             "ec2:DeleteSecurityGroup",
-            
+
             "ec2:CreateVolume",
             "ec2:AttachVolume",
             "ec2:DetachVolume",
@@ -102,7 +104,7 @@ AWS account should have default VPC or explicit VPC.  Requires AWS credentials w
             "ec2:DescribeInstances",
             "ec2:ModifyInstanceAttribute"
             "ec2:TerminateInstances",
-            
+
             "ec2:CreateTags",
           ],
           "Resource" : "*"

@@ -10,8 +10,15 @@ set -ex
 
 vmdk="$1"
 box="$2"
+vmware_box="$3"
 
 vmname="$(basename "${vmdk}" .vmdk)"
+
+cp "${vmdk}" "vmware_box/box-disk001.vmdk"
+cd vmware_box
+tar cvzf "../${vmware_box}" ./*
+rm -f box-disk001.vmdk
+cd ..
 
 # Create VirtualBox vm
 VBoxManage createvm --name "${vmname}" --ostype RedHat_64 --register
@@ -33,4 +40,3 @@ vagrant package --base "${vmname}" --output "${box}"
 
 # Destroy VirtualBox vm
 VBoxManage unregistervm "${vmname}" --delete
-

@@ -228,7 +228,9 @@ def main():
 
     vmdk = prefix + ".vmdk"
     box = prefix + ".box"
+    vmware_box = prefix + ".vmwarevm.box"
     guestbox = prefix + "-guest.box"
+    vmware_guestbox = prefix + "-guest.vmwarevm.box"
 
     # Allocate run identifier to uniquely name temporary resources.
     run_name = "ectou-export-{run_id}".format(run_id=uuid.uuid4())
@@ -316,10 +318,10 @@ def main():
         provision_file_get(ssh_client, "export.vmdk", vmdk)
 
     # Package vmdk into vagrant box
-    local_cmd(["bash", PACKAGE_SCRIPT, vmdk, box])
+    local_cmd(["bash", PACKAGE_SCRIPT, vmdk, box, vmware_box])
 
     # Install guest additions, apply security updates.
-    local_cmd(["bash", GUEST_SCRIPT, box, guestbox])
+    local_cmd(["bash", GUEST_SCRIPT, box, guestbox, vmware_box, vmware_guestbox])
 
 
 if __name__ == "__main__":
