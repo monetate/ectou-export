@@ -21,7 +21,9 @@ Examples:
     ./export.py --ami-name amzn-ami-hvm-2015.09.1.x86_64-gp2 [--vpc-name name] [--yum-proxy url]
     ./export.py --ami-name amzn-ami-hvm-2016.03.3.x86_64-gp2 [--vpc-name name] [--yum-proxy url]
 
-These examples export vagrant box files named ``AMI_NAME-DATETIME.box`` and ``AMI_NAME-DATETIME-guest.box``.
+These examples export vagrant box files named ``AMI_NAME-DATETIME.box``, ``AMI_NAME-DATETIME-guest.box``, ``AMI_NAME-DATETIME.vmwarevm.box`` and ``AMI_NAME-DATETIME-guest.vmwarevm.box``.
+To skip building VMWare boxes, use the flag ``--skip-vmware``. You must have VMWare Fusion Pro and the vagrant-vmware plugin installed for VMWare to work.
+To skip building VirtualBox boxes, use the flag ``--skip-virtualbox``.
 
 Overview
 --------
@@ -37,12 +39,14 @@ The ``export.py`` script will::
     download vmdk
 
     package-vagrant-box.sh (vmdk -> box)
+        create vmware box
         create virtualbox vm
         package vagrant box
 
     install-guest-additions.sh (box -> guest box)
         install guest additions
         apply security updates
+        package vmware box
         package vagrant box
 
 

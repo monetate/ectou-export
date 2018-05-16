@@ -178,6 +178,8 @@ def get_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--skip-virtualbox", action="store_true")
+    parser.add_argument("--skip-vmware", action="store_true")
 
     g = parser.add_argument_group("Input")
     g.add_argument("--ami-owner",
@@ -231,6 +233,8 @@ def main():
     vmware_box = prefix + ".vmwarevm.box"
     guestbox = prefix + "-guest.box"
     vmware_guestbox = prefix + "-guest.vmwarevm.box"
+    skip_virtualbox = "true" if args.skip_virtualbox else "false"
+    skip_vmware = "true" if args.skip_vmware else "false"
 
     # Allocate run identifier to uniquely name temporary resources.
     run_name = "ectou-export-{run_id}".format(run_id=uuid.uuid4())
@@ -318,10 +322,10 @@ def main():
         provision_file_get(ssh_client, "export.vmdk", vmdk)
 
     # Package vmdk into vagrant box
-    local_cmd(["bash", PACKAGE_SCRIPT, vmdk, box, vmware_box])
+    local_cmd(["bash", PACKAGE_SCRIPT, vmdk, box, vmware_box, skip_virtualbox, skip_vmware])
 
     # Install guest additions, apply security updates.
-    local_cmd(["bash", GUEST_SCRIPT, box, guestbox, vmware_box, vmware_guestbox])
+    local_cmd(["bash", GUEST_SCRIPT, box, guestbox, vmware_box, vmware_guestbox, skip_virtualbox, skip_vmware])
 
 
 if __name__ == "__main__":
