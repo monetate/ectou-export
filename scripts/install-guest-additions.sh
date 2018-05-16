@@ -49,6 +49,12 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision :shell,
     inline: "sudo yum -y update --security && sudo yum -y install gcc kernel-devel-\$(uname -r)"
+
+  config.vm.provider "vmware_desktop" do |vmware, override|
+    # install guest additions and make sure they stay up to date with kernel updates
+    override.vm.provision :shell,
+      inline: "sudo yum --enablerepo=epel install -y open-vm-tools && echo \"answer AUTO_KMODS_ENABLED yes\" | sudo tee -a /etc/vmware-tools/locations"
+  end
 end
 EOF
 vagrant up --provider=vmware_desktop
