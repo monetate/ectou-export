@@ -10,29 +10,17 @@ set -ex
 
 box="$1"
 outbox="$2"
-vmware_box="$3"
-vmware_outbox="$4"
-skip_virtualbox="$5"
-skip_vmware="$6"
 
 name="$(basename "${outbox}" .box)-$$"
 
 # Create temporary vagrant directory.
 export VAGRANT_CWD="$(mktemp -d -t "${name}")"
 
-if [ "$skip_virtualbox" = false ]; then
-  # Ensure vbguest plugin installed.
-  vagrant plugin list | grep vagrant-vbguest || vagrant plugin install vagrant-vbguest
-  # Register base box.
-  vagrant box add --name "${name}" "${box}"
-fi
+# Ensure vbguest plugin installed.
+vagrant plugin list | grep vagrant-vbguest || vagrant plugin install vagrant-vbguest
+# Register base box.
+vagrant box add --name "${name}" "${box}"
 
-if [ "$skip_vmware" = false ]; then
-  # Ensure vmware-desktop plugin installed.
-  vagrant plugin list | grep vagrant-vmware-desktop || vagrant plugin install vagrant-vmware-desktop
-  # Register base box.
-  vagrant box add --name "${name}" "${vmware_box}"
-fi
 
 # Install security updates.
 # Install compiler and kernel headers required for building guest additions.
@@ -64,22 +52,8 @@ Vagrant.configure(2) do |config|
 end
 EOF
 
-if [ "$skip_vmware" = false ]; then
-  vagrant up --provider=vmware_desktop
-  vagrant halt
-
-  # Export box.
-  vagrant package --output "${vmware_outbox}"
-  vagrant destroy --force
-
-  # Unregister base box.
-  vagrant box remove "${name}" --provider=vmware_fusion
-fi
-
-if [ "$skip_virtualbox" = false ]; then
-  vagrant up --provider=virtualbox
-  vagrant halt
-fi
+vagrant up --provider=virtualbox
+vagrant halt
 
 # Reboot in case of kernel security updates above.
 # Install guest additions.
@@ -98,19 +72,17 @@ Vagrant.configure(2) do |config|
 end
 EOF
 
-if [ "$skip_virtualbox" = false ]; then
-  vagrant up --provider=virtualbox
-  vagrant halt
+vagrant up --provider=virtualbox
+vagrant halt
 
-  # Export box.
-  vagrant package --output "${outbox}"
+# Export box.
+vagrant package --output "${outbox}"
 
-  # Destroy VM.
-  vagrant destroy --force
+# Destroy VM.
+vagrant destroy --force
 
-  # Unregister base box.
-  vagrant box remove "${name}" --provider=virtualbox
-fi
+# Unregister base box.
+vagrant box remove "${name}" --provider=virtualbox
 
 # Clean up temporary vagrant directory.
 rm -rf "${VAGRANT_CWD}"
