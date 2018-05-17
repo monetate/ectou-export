@@ -13,6 +13,6 @@ box="$2"
 
 cp "${vmdk}" "vmware_box/box-disk001.vmdk"
 cd vmware_box
-tar cvzf "../${vmware_box}" ./*
+tar cvzf "../${box}" ./*
 rm -f box-disk001.vmdk
 cd ..
