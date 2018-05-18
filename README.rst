@@ -1,7 +1,7 @@
 ectou-export
 ============
 
-This project enables running an `Amazon Linux AMI`_ on a local `VirtualBox`_ and/or VMWare virtual machine via `Vagrant`_.
+This project enables running an `Amazon Linux AMI`_ on a local `VirtualBox`_ or VMWare virtual machine via `Vagrant`_.
 
 Goal
 ----
@@ -21,9 +21,9 @@ Examples:
     ./export.py --ami-name amzn-ami-hvm-2015.09.1.x86_64-gp2 [--vpc-name name] [--yum-proxy url]
     ./export.py --ami-name amzn-ami-hvm-2016.03.3.x86_64-gp2 [--vpc-name name] [--yum-proxy url]
 
-These examples export vagrant box files named ``AMI_NAME-DATETIME.box``, ``AMI_NAME-DATETIME-guest.box``, ``AMI_NAME-DATETIME.vmwarevm.box`` and ``AMI_NAME-DATETIME-guest.vmwarevm.box``.
-To skip building VMWare boxes, use the flag ``--skip-vmware``. You must have VMWare Fusion Pro and the vagrant-vmware plugin installed for VMWare to work.
-To skip building VirtualBox boxes, use the flag ``--skip-virtualbox``.
+These examples export vagrant box files named ``AMI_NAME-DATETIME-virtualbox.box`` and ``AMI_NAME-DATETIME-virtualbox-guest.box`` or ``AMI_NAME-DATETIME-vmware.box`` and ``AMI_NAME-DATETIME-vmware-guest.box``.
+To build VMWare boxes, use the option ``--provider=vmware``. You must have VMWare Fusion Pro and the vagrant-vmware plugin installed for VMWare to work.
+To build VirtualBox boxes, use the option ``--provider=virtualbox`` (or leave it off as it is the default).
 
 Overview
 --------
@@ -38,15 +38,13 @@ The ``export.py`` script will::
             create vmdk
     download vmdk
 
-    package-vagrant-box.sh (vmdk -> box)
-        create vmware box
-        create virtualbox vm
+    package-[virtualbox/vmware]-box.sh (vmdk -> box)
+        create vmware/virtualbox vm
         package vagrant box
 
-    install-guest-additions.sh (box -> guest box)
+    install-guest-additions-[virtualbox/vmware].sh (box -> guest box)
         install guest additions
         apply security updates
-        package vmware box
         package vagrant box
 
 

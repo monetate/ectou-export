@@ -28,30 +28,34 @@ Vagrant.configure(2) do |config|
   config.vm.box = "${name}"
   config.ssh.insert_key = false
 
-  # Do not attempt to install guest additions.
-  config.vbguest.auto_update = false
   # Do not attempt to sync folder, dependent on guest additions.
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
-  config.vm.provider "virtualbox" do |v|
-    v.memory = 1024
-  end
-  config.vm.provider "vmware_desktop" do |v|
-    v.vmx["memsize"] = 1024
-  end
-
   config.vm.provision :shell,
-    inline: "sudo yum -y update --security && sudo yum -y install gcc kernel-devel-\$(uname -r)"
-
-  config.vm.provider "vmware_desktop" do |vmware, override|
-    # install guest additions and make sure they stay up to date with kernel updates
-    override.vm.provision :shell,
-      inline: "sudo yum --enablerepo=epel install -y open-vm-tools && echo \"answer AUTO_KMODS_ENABLED yes\" | sudo tee -a /etc/vmware-tools/locations"
-  end
+    inline: "yum -y update --security && yum -y install gcc kernel-devel"
 end
 EOF
 
 vagrant up --provider=vmware_desktop
+vagrant halt
+
+# Reboot in case of kernel security updates above.
+# Install guest additions.
+cat >"${VAGRANT_CWD}/Vagrantfile" <<EOF
+Vagrant.configure(2) do |config|
+  config.vm.box = "${name}"
+  config.ssh.insert_key = false
+
+  # Do not attempt to sync folder, dependent on guest additions.
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # install guest additions and make sure they stay up to date with kernel updates
+  config.vm.provision :shell,
+    inline: "yum --enablerepo=epel install -y open-vm-tools && echo \"answer AUTO_KMODS_ENABLED yes\" | tee -a /etc/vmware-tools/locations"
+end
+EOF
+
+vagrant up --provider=vmware_desktop --provision
 vagrant halt
 
 # Export box.
@@ -63,3 +67,4 @@ vagrant box remove "${name}" --provider=vmware_fusion
 
 # Clean up temporary vagrant directory.
 rm -rf "${VAGRANT_CWD}"
+unset VAGRANT_CWD

@@ -180,8 +180,10 @@ def get_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--debug", action="store_true")
-    parser.add_argument("--skip-virtualbox", action="store_true")
-    parser.add_argument("--skip-vmware", action="store_true")
+    parser.add_argument("--provider",
+                        default="virtualbox",
+                        choices=["virtualbox", "vmware"],
+                        help="The provider to build a box for. virtualbox or vmware")
 
     g = parser.add_argument_group("Input")
     g.add_argument("--ami-owner",
@@ -231,10 +233,11 @@ def main():
                                                             dt=datetime.datetime.utcnow())
 
     vmdk = prefix + ".vmdk"
-    virtualbox_box = prefix + "-virtualbox.box"
-    vmware_box = prefix + "-vmwarevm.box"
-    virtualbox_guestbox = prefix + "-guest-virtualbox.box"
-    vmware_guestbox = prefix + "-guest-vmware.box"
+    box = prefix + "-{}.box".format(args.provider)
+    guestbox = prefix + "-{}-guest.box".format(args.provider)
+
+    package_script = PACKAGE_VIRTUALBOX_SCRIPT if args.provider == 'virtualbox' else PACKAGE_VMWARE_SCRIPT
+    guest_script = GUEST_VIRTUALBOX_SCRIPT if args.provider == 'virtualbox' else GUEST_VMWARE_SCRIPT
 
     # Allocate run identifier to uniquely name temporary resources.
     run_name = "ectou-export-{run_id}".format(run_id=uuid.uuid4())
@@ -321,20 +324,11 @@ def main():
                         get_pty=True)
         provision_file_get(ssh_client, "export.vmdk", vmdk)
 
-    # vmware must come first because it copies the vmdk whereas virtualbox will make it readonly
-    if not args.skip_vmware:
-        # Package vmdk into vmware box
-        local_cmd(["bash", PACKAGE_VMWARE_SCRIPT, vmdk, vmware_box])
-    if not args.skip_virtualbox:
-        # Package vmdk into virtualbox box
-        local_cmd(["bash", PACKAGE_VIRTUALBOX_SCRIPT, vmdk, virtualbox_box])
+    # Package vmdk into vagrant box
+    local_cmd(["bash", package_script, vmdk, box])
 
-    if not args.skip_vmware:
-        # Install guest additions, apply security updates.
-        local_cmd(["bash", GUEST_VMWARE_SCRIPT, vmware_box, vmware_guestbox])
-    if not args.skip_virtualbox:
-        # Install guest additions, apply security updates.
-        local_cmd(["bash", GUEST_VIRTUALBOX_SCRIPT, virtualbox_box, virtualbox_guestbox])
+    # Install guest additions, apply security updates.
+    local_cmd(["bash", guest_script, box, guestbox])
 
 
 if __name__ == "__main__":
