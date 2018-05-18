@@ -56,10 +56,10 @@ Host software
 
 The software has been tested using:
 
-- VirtualBox 5.1.8
-- VMWare Fusion Pro 10.1
+- VirtualBox 5.2.X
+- VMWare Fusion Pro 10.1.X
 - Vagrant VMware plugin
-- Vagrant 1.8.6
+- Vagrant 2.1.1
 - Python 2.7
 
   - boto3 1.2.3
