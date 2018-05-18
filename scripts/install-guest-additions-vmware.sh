@@ -32,7 +32,7 @@ Vagrant.configure(2) do |config|
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
   config.vm.provision :shell,
-    inline: "yum -y update --security && yum -y install gcc kernel-devel"
+    inline: "yum -y update --security && yum -y install gcc kernel kernel-devel"
 end
 EOF
 
