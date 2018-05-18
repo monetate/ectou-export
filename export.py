@@ -18,8 +18,10 @@ import time
 import uuid
 
 EXPORT_SCRIPT = "scripts/export-vmdk.sh"
-PACKAGE_SCRIPT = "scripts/package-vagrant-box.sh"
-GUEST_SCRIPT = "scripts/install-guest-additions.sh"
+PACKAGE_VIRTUALBOX_SCRIPT = "scripts/package-virtualbox-box.sh"
+GUEST_VIRTUALBOX_SCRIPT = "scripts/install-guest-additions-virtualbox.sh"
+PACKAGE_VMWARE_SCRIPT = "scripts/package-vmware-box.sh"
+GUEST_VMWARE_SCRIPT = "scripts/install-guest-additions-vmware.sh"
 PRIVATE_KEY_FILE = "keypair.pem"
 
 POLL_SECONDS = 5
@@ -178,6 +180,10 @@ def get_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--provider",
+                        default="virtualbox",
+                        choices=["virtualbox", "vmware"],
+                        help="The provider to build a box for. virtualbox or vmware")
 
     g = parser.add_argument_group("Input")
     g.add_argument("--ami-owner",
@@ -227,8 +233,11 @@ def main():
                                                             dt=datetime.datetime.utcnow())
 
     vmdk = prefix + ".vmdk"
-    box = prefix + ".box"
-    guestbox = prefix + "-guest.box"
+    box = prefix + "-{}.box".format(args.provider)
+    guestbox = prefix + "-{}-guest.box".format(args.provider)
+
+    package_script = PACKAGE_VIRTUALBOX_SCRIPT if args.provider == 'virtualbox' else PACKAGE_VMWARE_SCRIPT
+    guest_script = GUEST_VIRTUALBOX_SCRIPT if args.provider == 'virtualbox' else GUEST_VMWARE_SCRIPT
 
     # Allocate run identifier to uniquely name temporary resources.
     run_name = "ectou-export-{run_id}".format(run_id=uuid.uuid4())
@@ -316,10 +325,10 @@ def main():
         provision_file_get(ssh_client, "export.vmdk", vmdk)
 
     # Package vmdk into vagrant box
-    local_cmd(["bash", PACKAGE_SCRIPT, vmdk, box])
+    local_cmd(["bash", package_script, vmdk, box])
 
     # Install guest additions, apply security updates.
-    local_cmd(["bash", GUEST_SCRIPT, box, guestbox])
+    local_cmd(["bash", guest_script, box, guestbox])
 
 
 if __name__ == "__main__":

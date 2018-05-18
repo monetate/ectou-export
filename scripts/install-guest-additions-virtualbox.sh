@@ -13,14 +13,14 @@ outbox="$2"
 
 name="$(basename "${outbox}" .box)-$$"
 
-# Ensure vbguest plugin installed.
-vagrant plugin list | grep vagrant-vbguest || vagrant plugin install vagrant-vbguest
-
 # Create temporary vagrant directory.
 export VAGRANT_CWD="$(mktemp -d -t "${name}")"
 
+# Ensure vbguest plugin installed.
+vagrant plugin list | grep vagrant-vbguest || vagrant plugin install vagrant-vbguest
 # Register base box.
 vagrant box add --name "${name}" "${box}"
+
 
 # Install security updates.
 # Install compiler and kernel headers required for building guest additions.
@@ -34,11 +34,13 @@ Vagrant.configure(2) do |config|
   # Do not attempt to sync folder, dependent on guest additions.
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
+  # Install compiler and kernel headers required for building guest additions.
   config.vm.provision :shell,
-    inline: "yum -y update --security && yum -y install gcc kernel-devel"
+    inline: "yum -y update --security && yum -y install gcc kernel kernel-devel"
 end
 EOF
-vagrant up
+
+vagrant up --provider=virtualbox
 vagrant halt
 
 # Reboot in case of kernel security updates above.
@@ -50,7 +52,8 @@ Vagrant.configure(2) do |config|
   config.ssh.insert_key = false
 end
 EOF
-vagrant up
+
+vagrant up --provider=virtualbox
 vagrant halt
 
 # Export box.
@@ -60,7 +63,8 @@ vagrant package --output "${outbox}"
 vagrant destroy --force
 
 # Unregister base box.
-vagrant box remove "${name}"
+vagrant box remove "${name}" --provider=virtualbox
 
 # Clean up temporary vagrant directory.
 rm -rf "${VAGRANT_CWD}"
+unset VAGRANT_CWD

@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# Package exported Amazon Linux AMI vmdk image into Vagrant box.
+# Package exported Amazon Linux AMI vmdk image into VirtualBox box.
 #
 # Usage:
-#   package-vagrant-box.sh input-vmdk output-box
+#   package-virtualbox-box.sh input-vmdk output-box
 #
 
 set -ex
@@ -33,4 +33,3 @@ vagrant package --base "${vmname}" --output "${box}"
 
 # Destroy VirtualBox vm
 VBoxManage unregistervm "${vmname}" --delete
-

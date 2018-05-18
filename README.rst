@@ -1,7 +1,7 @@
 ectou-export
 ============
 
-This project enables running an `Amazon Linux AMI`_ on a local `VirtualBox`_ virtual machine via `Vagrant`_.
+This project enables running an `Amazon Linux AMI`_ on a local `VirtualBox`_ or VMWare virtual machine via `Vagrant`_.
 
 Goal
 ----
@@ -21,7 +21,9 @@ Examples:
     ./export.py --ami-name amzn-ami-hvm-2015.09.1.x86_64-gp2 [--vpc-name name] [--yum-proxy url]
     ./export.py --ami-name amzn-ami-hvm-2016.03.3.x86_64-gp2 [--vpc-name name] [--yum-proxy url]
 
-These examples export vagrant box files named ``AMI_NAME-DATETIME.box`` and ``AMI_NAME-DATETIME-guest.box``.
+These examples export vagrant box files named ``AMI_NAME-DATETIME-virtualbox.box`` and ``AMI_NAME-DATETIME-virtualbox-guest.box`` or ``AMI_NAME-DATETIME-vmware.box`` and ``AMI_NAME-DATETIME-vmware-guest.box``.
+To build VMWare boxes, use the option ``--provider=vmware``. You must have VMWare Fusion Pro and the vagrant-vmware plugin installed for VMWare to work.
+To build VirtualBox boxes, use the option ``--provider=virtualbox`` (or leave it off as it is the default).
 
 Overview
 --------
@@ -36,11 +38,11 @@ The ``export.py`` script will::
             create vmdk
     download vmdk
 
-    package-vagrant-box.sh (vmdk -> box)
-        create virtualbox vm
+    package-[virtualbox/vmware]-box.sh (vmdk -> box)
+        create vmware/virtualbox vm
         package vagrant box
 
-    install-guest-additions.sh (box -> guest box)
+    install-guest-additions-[virtualbox/vmware].sh (box -> guest box)
         install guest additions
         apply security updates
         package vagrant box
@@ -54,8 +56,10 @@ Host software
 
 The software has been tested using:
 
-- VirtualBox 5.1.8
-- Vagrant 1.8.6
+- VirtualBox 5.2.X
+- VMWare Fusion Pro 10.1.X
+- Vagrant VMware plugin
+- Vagrant 2.1.1
 - Python 2.7
 
   - boto3 1.2.3
@@ -92,7 +96,7 @@ AWS account should have default VPC or explicit VPC.  Requires AWS credentials w
             "ec2:CreateSecurityGroup",
             "ec2:AuthorizeSecurityGroupIngress",
             "ec2:DeleteSecurityGroup",
-            
+
             "ec2:CreateVolume",
             "ec2:AttachVolume",
             "ec2:DetachVolume",
@@ -102,7 +106,7 @@ AWS account should have default VPC or explicit VPC.  Requires AWS credentials w
             "ec2:DescribeInstances",
             "ec2:ModifyInstanceAttribute"
             "ec2:TerminateInstances",
-            
+
             "ec2:CreateTags",
           ],
           "Resource" : "*"
