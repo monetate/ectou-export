@@ -64,7 +64,7 @@ vagrant package --output "${outbox}"
 vagrant destroy --force
 
 # Unregister base box.
-vagrant box remove "${name}" --provider=vmware_fusion
+vagrant box remove "${name}" --provider=vmware_desktop
 
 # Clean up temporary vagrant directory.
 rm -rf "${VAGRANT_CWD}"
