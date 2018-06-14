@@ -99,7 +99,8 @@ def attach_ebs_image(ec2, instance, image, device_name):
     # Create volume from EBS image root device snapshot.
     volume = ec2.create_volume(SnapshotId=image.block_device_mappings[0]["Ebs"]["SnapshotId"],
                                AvailabilityZone=instance.placement["AvailabilityZone"],
-                               VolumeType="gp2")
+                               VolumeType="gp2",
+                               Size=16)  # GiBs
     print "create", repr(volume)
 
     wait_until_volume_state(volume, "available")
