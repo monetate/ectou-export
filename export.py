@@ -218,6 +218,8 @@ def get_parser():
                    help="Attach source image to this device.")
     g.add_argument("--volume-size", type=int,
                    help="Minimum size of the main volume in GB e.g. 16")
+    g.add_argument("--second-volume-size", type=int,
+                   help="The size of an optional second volume in GB e.g. 16")
 
     g = parser.add_argument_group("Provisioner")
     g.add_argument("--yum-proxy",
@@ -244,6 +246,8 @@ def main():
 
     package_script = PACKAGE_VIRTUALBOX_SCRIPT if args.provider == 'virtualbox' else PACKAGE_VMWARE_SCRIPT
     guest_script = GUEST_VIRTUALBOX_SCRIPT if args.provider == 'virtualbox' else GUEST_VMWARE_SCRIPT
+
+    second_volume_size = str(args.second_volume_size) if args.second_volume_size else ''
 
     # Allocate run identifier to uniquely name temporary resources.
     run_name = "ectou-export-{run_id}".format(run_id=uuid.uuid4())
@@ -331,7 +335,7 @@ def main():
         provision_file_get(ssh_client, "export.vmdk", vmdk)
 
     # Package vmdk into vagrant box
-    local_cmd(["bash", package_script, vmdk, box])
+    local_cmd(["bash", package_script, vmdk, box, second_volume_size])
 
     # Install guest additions, apply security updates.
     local_cmd(["bash", guest_script, box, guestbox])
