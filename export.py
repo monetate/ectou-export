@@ -95,11 +95,15 @@ def wait_until_volume_state(volume, state):
         volume.reload()
 
 
-def attach_ebs_image(ec2, instance, image, device_name):
+def attach_ebs_image(ec2, instance, image, device_name, volume_size):
+    kwargs = {}
+    if volume_size:
+        kwargs['Size'] = volume_size  # GiBs or None for snapshot's size
     # Create volume from EBS image root device snapshot.
     volume = ec2.create_volume(SnapshotId=image.block_device_mappings[0]["Ebs"]["SnapshotId"],
                                AvailabilityZone=instance.placement["AvailabilityZone"],
-                               VolumeType="gp2")
+                               VolumeType="gp2",
+                               **kwargs)
     print "create", repr(volume)
 
     wait_until_volume_state(volume, "available")
@@ -212,6 +216,8 @@ def get_parser():
     g.add_argument("--device-name",
                    default="/dev/xvdf",
                    help="Attach source image to this device.")
+    g.add_argument("--volume-size", type=int,
+                   help="Minimum size of the main volume in GB e.g. 16")
 
     g = parser.add_argument_group("Provisioner")
     g.add_argument("--yum-proxy",
@@ -306,7 +312,7 @@ def main():
         instance.wait_until_running()
 
         # Attach source image as device
-        attach_ebs_image(ec2, instance, source_image, args.device_name)
+        attach_ebs_image(ec2, instance, source_image, args.device_name, args.volume_size)
 
         # Save key pair for ssh
         with open(PRIVATE_KEY_FILE, "w") as f:

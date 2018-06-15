@@ -37,6 +37,10 @@ Vagrant.configure(2) do |config|
   # Install compiler and kernel headers required for building guest additions.
   config.vm.provision :shell,
     inline: "yum -y update --security && yum -y install gcc kernel kernel-devel"
+
+  # Resize filesystem to full size of volume
+  config.vm.provision :shell,
+    inline: "resize2fs /dev/sda1"
 end
 EOF
 
