@@ -10,6 +10,7 @@ set -ex
 
 vmdk="$1"
 box="$2"
+second_volume_size="$3"
 
 vmname="$(basename "${vmdk}" .vmdk)"
 
@@ -19,6 +20,10 @@ VBoxManage createvm --name "${vmname}" --ostype RedHat_64 --register
 # Configure vmdk disk
 VBoxManage storagectl "${vmname}" --name SATA --add sata --controller IntelAhci
 VBoxManage storageattach "${vmname}" --storagectl SATA --port 0 --device 0 --type hdd --medium "${vmdk}"
+if [ -n "${second_volume_size}" ]; then
+  VBoxManage createmedium disk --filename seconddisk.vmdk --format vmdk --size $(($second_volume_size * 1024))
+  VBoxManage storageattach "${vmname}" --storagectl SATA --port 1 --device 0 --type hdd --medium seconddisk.vmdk
+fi
 
 # Configure network drivers as virtio
 for i in 1 2 3 4; do
